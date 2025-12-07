@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\StepController;
 use App\Http\Controllers\TypingController;
+use App\Http\Controllers\CertificateController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -52,14 +53,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Learning Module Routes
-    Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
-    Route::get('/levels/{level}', [LevelController::class, 'show'])->name('levels.show');
-    Route::get('/steps/{step}', [StepController::class, 'show'])->name('steps.show');
+    // Certificate Routes
+    Route::get('/my/certificates', [CertificateController::class, 'myCertificates'])->name('certificates.my');
+    Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
 
-    // Typing Exercise Routes
-    Route::get('/exercises/{exercise}', [TypingController::class, 'show'])->name('exercises.show');
-    Route::post('/exercises/{exercise}/attempt', [TypingController::class, 'submit'])->name('exercises.attempt');
+    // Learning Module Routes
+    Route::middleware('beginner-steps')->group(function () {
+        Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
+        Route::get('/levels/{level}', [LevelController::class, 'show'])->name('levels.show');
+        Route::get('/steps/{step}', [StepController::class, 'show'])->name('steps.show');
+
+        // Typing Exercise Routes
+        Route::get('/exercises/{exercise}', [TypingController::class, 'show'])->name('exercises.show');
+        Route::post('/exercises/{exercise}/attempt', [TypingController::class, 'submit'])->name('exercises.attempt');
+    });
 });
 
 // Test routes for view testing
@@ -130,3 +137,17 @@ Route::get('/test-exercise-result', function () {
 })->name('test.exercise.result');
 
 require __DIR__.'/auth.php';
+
+// Certificate verification route (public)
+Route::get('/cert/{certificate_code}', [CertificateController::class, 'verify'])->name('certificates.verify');
+
+// Test route for certificate service
+Route::get('/test-certificate', [\App\Http\Controllers\TestCertificateController::class, 'testCertificate'])
+    ->name('test.certificate');
+
+// Test routes for certificate verification view
+Route::get('/test-valid-certificate', [\App\Http\Controllers\TestCertificateController::class, 'testValidCertificate'])
+    ->name('test.valid.certificate');
+
+Route::get('/test-invalid-certificate', [\App\Http\Controllers\TestCertificateController::class, 'testInvalidCertificate'])
+    ->name('test.invalid.certificate');

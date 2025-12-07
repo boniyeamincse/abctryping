@@ -4,12 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Exercise;
 use App\Models\ExerciseAttempt;
+use App\Services\ProgressService;
+use App\Services\CertificateService;
 use App\Services\TypingEvaluator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TypingController extends Controller
 {
+    protected $progressService;
+    protected $certificateService;
+
+    public function __construct(ProgressService $progressService, CertificateService $certificateService)
+    {
+        $this->progressService = $progressService;
+        $this->certificateService = $certificateService;
+    }
+
     /**
      * Display the typing exercise
      *
@@ -75,6 +86,16 @@ class TypingController extends Controller
             'duration_seconds' => $validated['duration_seconds'],
             'typed_text' => $validated['typed_text']
         ]);
+
+        // Update progress for authenticated users only
+        if (Auth::check()) {
+            try {
+                $this->progressService->updateProgressAfterAttempt(Auth::user(), $attempt, $this->certificateService);
+            } catch (\Exception $e) {
+                // Log the error but don't fail the request
+                \Log::error('Failed to update progress after exercise attempt: ' . $e->getMessage());
+            }
+        }
 
         // Generate motivational message based on performance
         $motivationalMessage = $this->getMotivationalMessage($metrics['accuracy'], $metrics['wpm']);

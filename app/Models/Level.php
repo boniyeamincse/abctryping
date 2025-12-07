@@ -30,4 +30,12 @@ class Level extends Model
     {
         return $this->hasMany(Step::class);
     }
+
+    /**
+     * Get the certificates for this level.
+     */
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }

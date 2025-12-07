@@ -105,15 +105,30 @@
             <!-- Quick Actions -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                <div class="space-y-3">
-                    <a href="#" class="block w-full text-center px-6 py-3 border border-transparent rounded-full font-semibold text-white uppercase tracking-widest bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        Continue Learning
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="{{ route('levels.index') }}" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                            <span class="text-xl">📚</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">Levels</span>
                     </a>
-                    <a href="#" class="block w-full text-center px-6 py-3 border border-gray-300 rounded-full font-semibold text-gray-700 uppercase tracking-widest bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        Practice Now
+                    <a href="#" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-green-300 hover:shadow-md transition-all duration-200">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                            <span class="text-xl">🎯</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">Practice</span>
                     </a>
-                    <a href="#" class="block w-full text-center px-6 py-3 border border-gray-300 rounded-full font-semibold text-gray-700 uppercase tracking-widest bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        View Badges
+                    <a href="#" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-yellow-300 hover:shadow-md transition-all duration-200">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
+                            <span class="text-xl">🏅</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">Badges</span>
+                    </a>
+                    <a href="{{ route('certificates.my') }}" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-purple-300 hover:shadow-md transition-all duration-200">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-2">
+                            <span class="text-xl">📜</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">Certificates</span>
                     </a>
                 </div>
             </div>

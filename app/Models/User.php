@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Step;
 
 class User extends Authenticatable
 {
@@ -52,5 +53,32 @@ class User extends Authenticatable
     public function exerciseAttempts()
     {
         return $this->hasMany(ExerciseAttempt::class);
+    }
+
+    /**
+     * Get the certificates for the user.
+     */
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /**
+     * Get the step progress records for the user.
+     */
+    public function stepProgress()
+    {
+        return $this->hasMany(StepProgress::class);
+    }
+
+    /**
+     * Get the step progress for a specific step.
+     *
+     * @param Step $step
+     * @return StepProgress|null
+     */
+    public function stepProgressForStep(Step $step)
+    {
+        return $this->stepProgress()->where('step_id', $step->id)->first();
     }
 }

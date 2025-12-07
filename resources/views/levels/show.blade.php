@@ -42,8 +42,49 @@
 
                     <p class="text-gray-600 mb-6">{{ $step->description }}</p>
 
+                    <!-- Step Status Indicator -->
+                    @php
+                        $status = $stepProgress[$step->id] ?? 'locked';
+                        $isLocked = $status === 'locked';
+                        $isInProgress = $status === 'in_progress';
+                        $isCompleted = $status === 'completed';
+                    @endphp
+
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2">
+                            @if($isCompleted)
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-green-600 font-medium">Completed</span>
+                                </div>
+                            @elseif($isInProgress)
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-blue-600 font-medium">In Progress</span>
+                                </div>
+                            @else
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-gray-600 font-medium">Locked</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center">
-                        <a href="{{ route('steps.show', $step) }}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200">
+                        <a href="{{ route('steps.show', $step) }}" class="inline-flex items-center px-4 py-2 {{ $isLocked ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-primary-600 text-white hover:bg-primary-700' }} rounded-lg transition-colors duration-200 {{ $isLocked ? '' : 'hover:bg-primary-700' }}" {{ $isLocked ? 'disabled' : '' }}>
                             View Step
                             <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

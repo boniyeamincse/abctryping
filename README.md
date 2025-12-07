@@ -76,6 +76,79 @@ abctyping/
 - **Authentication**: Laravel Breeze
 - **JavaScript**: Alpine.js for interactivity
 
+## 📄 PDF Generation with DOMPDF
+
+The project includes DOMPDF integration for generating PDF documents, particularly useful for creating certificates, reports, and other downloadable content.
+
+### Installation
+
+DOMPDF is already included in the project dependencies. If you need to install it manually:
+
+```bash
+composer require barryvdh/laravel-dompdf
+```
+
+### Configuration
+
+The package is pre-configured and ready to use. The main configuration options include:
+
+- **Paper Size**: A4, Letter, etc.
+- **Orientation**: Portrait or Landscape
+- **Font Options**: Custom fonts and styling
+- **Image Support**: Embed images in PDFs
+
+### Basic Usage
+
+To generate a PDF in your controllers:
+
+```php
+use Barryvdh\DomPDF\Facade\Pdf;
+
+// Generate PDF from view
+$pdf = Pdf::loadView('certificates.template', [
+    'user' => $user,
+    'certificateData' => $data
+]);
+
+// Download the PDF
+return $pdf->download('certificate.pdf');
+
+// Or stream it to browser
+return $pdf->stream('certificate.pdf');
+```
+
+### Advanced Features
+
+- **Custom Paper Sizes**: `->setPaper('a4', 'landscape')`
+- **Custom Options**: `->setOptions(['defaultFont' => 'sans-serif'])`
+- **HTML Content**: Generate PDFs from raw HTML strings
+- **View Data**: Pass data to your Blade templates
+
+### Certificate Generation Example
+
+The system includes a certificate generation feature that uses DOMPDF:
+
+```php
+// In your controller
+public function generateCertificate(User $user)
+{
+    $certificateData = CertificateService::generateCertificateData($user);
+
+    $pdf = Pdf::loadView('certificates.certificate', [
+        'user' => $user,
+        'certificate' => $certificateData
+    ]);
+
+    return $pdf->download('typing-certificate-'.$user->id.'.pdf');
+}
+```
+
+### Troubleshooting
+
+- **Font Issues**: Ensure fonts are properly referenced in your CSS
+- **Image Paths**: Use absolute paths for images in PDF generation
+- **Memory Limits**: Large PDFs may require increased PHP memory limits
+
 ## 🎨 Design System
 
 ### Color Palette

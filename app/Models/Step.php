@@ -40,4 +40,34 @@ class Step extends Model
     {
         return $this->hasMany(Exercise::class);
     }
+
+    /**
+     * Get the step progress records for this step.
+     */
+    public function stepProgress(): HasMany
+    {
+        return $this->hasMany(StepProgress::class);
+    }
+
+    /**
+     * Get the next step in the same level.
+     *
+     * @return Step|null
+     */
+    public function nextStep()
+    {
+        return Step::where('level_id', $this->level_id)
+            ->where('order', $this->order + 1)
+            ->first();
+    }
+
+    /**
+     * Check if this step belongs to a beginner level.
+     *
+     * @return bool
+     */
+    public function isBeginnerLevel()
+    {
+        return $this->level && strtolower($this->level->name) === 'beginner';
+    }
 }
