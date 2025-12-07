@@ -131,4 +131,27 @@ class TypingController extends Controller
             return 'Keep practicing! Every attempt helps you improve!';
         }
     }
+
+    /**
+     * Display the practice index page with available exercises
+     *
+     * @return \Illuminate\View\View
+     */
+    public function practiceIndex()
+    {
+        // Only for authenticated users
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        // Get available exercises for practice
+        $exercises = Exercise::with(['step.level'])
+            ->orderBy('step_id')
+            ->orderBy('difficulty')
+            ->get();
+
+        return view('exercises.practice-index', [
+            'exercises' => $exercises
+        ]);
+    }
 }

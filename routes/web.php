@@ -8,6 +8,7 @@ use App\Http\Controllers\StepController;
 use App\Http\Controllers\TypingController;
 use App\Http\Controllers\CertificateController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeacherDashboardController;
 
 Route::get('/', function () {
     return view('home');
@@ -43,6 +44,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:teacher')
         ->name('dashboard.teacher');
 
+    // Teacher Dashboard Routes
+    Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
+        Route::get('/dashboard', [TeacherDashboardController::class, 'dashboard'])->name('teacher.dashboard');
+        Route::get('/batches', [TeacherDashboardController::class, 'batchesIndex'])->name('teacher.batches');
+        Route::get('/batches/{batch}', [TeacherDashboardController::class, 'batchDetail'])->name('teacher.batch.detail');
+        Route::get('/students/{student}', [TeacherDashboardController::class, 'studentDetail'])->name('teacher.student.detail');
+
+        // Feedback routes
+        Route::post('/students/{student}/feedback', [TeacherDashboardController::class, 'storeFeedback'])->name('teacher.feedback.store');
+
+        // Assignment routes
+        Route::post('/assignments', [TeacherDashboardController::class, 'storeAssignment'])->name('teacher.assignment.store');
+    });
+
     Route::get('/dashboard/super-admin', [DashboardController::class, 'superAdminDashboard'])
         ->middleware('role:super_admin')
         ->name('dashboard.super-admin');
@@ -57,6 +72,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/my/certificates', [CertificateController::class, 'myCertificates'])->name('certificates.my');
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download'])->name('certificates.download');
 
+    // Badges/Achievements Route (fallback to certificates for now)
+    Route::get('/badges', [CertificateController::class, 'myCertificates'])->name('badges.index');
+
     // Learning Module Routes
     Route::middleware('beginner-steps')->group(function () {
         Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
@@ -64,6 +82,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/steps/{step}', [StepController::class, 'show'])->name('steps.show');
 
         // Typing Exercise Routes
+        Route::get('/practice', [TypingController::class, 'practiceIndex'])->name('practice.index');
         Route::get('/exercises/{exercise}', [TypingController::class, 'show'])->name('exercises.show');
         Route::post('/exercises/{exercise}/attempt', [TypingController::class, 'submit'])->name('exercises.attempt');
     });

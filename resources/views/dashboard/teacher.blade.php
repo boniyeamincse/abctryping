@@ -8,18 +8,18 @@
             <p class="text-gray-600">Monitor your students' progress and manage your assigned batches.</p>
         </div>
 
-        <!-- Key Metrics -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Assigned Batches -->
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Batches -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Assigned Batches</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">Total Batches</h3>
                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <span class="text-xl">📚</span>
                     </div>
                 </div>
-                <div class="text-3xl font-bold text-gray-900">3</div>
-                <div class="text-sm text-gray-600">Active batches</div>
+                <div class="text-3xl font-bold text-gray-900">{{ $summary['total_batches'] }}</div>
+                <div class="text-sm text-gray-600">Assigned batches</div>
             </div>
 
             <!-- Total Students -->
@@ -30,171 +30,177 @@
                         <span class="text-xl">👥</span>
                     </div>
                 </div>
-                <div class="text-3xl font-bold text-gray-900">48</div>
+                <div class="text-3xl font-bold text-gray-900">{{ $summary['total_students'] }}</div>
                 <div class="text-sm text-gray-600">Across all batches</div>
             </div>
 
-            <!-- Average Progress -->
+            <!-- Average WPM -->
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Avg Progress</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">Avg WPM</h3>
                     <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <span class="text-xl">📈</span>
+                        <span class="text-xl">⚡</span>
                     </div>
                 </div>
-                <div class="text-3xl font-bold text-gray-900">58%</div>
-                <div class="text-sm text-gray-600">Overall completion rate</div>
+                <div class="text-3xl font-bold text-gray-900">{{ number_format($summary['average_wpm'], 1) }}</div>
+                <div class="text-sm text-gray-600">Last 7 days</div>
+            </div>
+
+            <!-- Average Accuracy -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Avg Accuracy</h3>
+                    <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl">🎯</span>
+                    </div>
+                </div>
+                <div class="text-3xl font-bold text-gray-900">{{ number_format($summary['average_accuracy'], 1) }}%</div>
+                <div class="text-sm text-gray-600">Last 7 days</div>
             </div>
         </div>
 
-        <!-- Quick Actions & Student Performance -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                <div class="space-y-3">
-                    <a href="#" class="block w-full text-center px-6 py-3 border border-transparent rounded-full font-semibold text-white uppercase tracking-widest bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        View My Batches
-                    </a>
-                    <a href="#" class="block w-full text-center px-6 py-3 border border-gray-300 rounded-full font-semibold text-gray-700 uppercase tracking-widest bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        Check Assignments
-                    </a>
-                    <a href="#" class="block w-full text-center px-6 py-3 border border-gray-300 rounded-full font-semibold text-gray-700 uppercase tracking-widest bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        Generate Reports
-                    </a>
-                </div>
+        <!-- My Batches List -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">My Batches</h3>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View All Batches</a>
             </div>
 
-            <!-- Student Performance -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Student Performance</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($batches as $batch)
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-gray-900">{{ $batch->name }}</h4>
+                            <span class="text-sm text-gray-600">{{ $batch->students->count() }} students</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{{ $batch->level->name ?? 'N/A' }}</span>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">{{ ucfirst($batch->status) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-600">Avg WPM: {{ number_format($batch->average_wpm, 1) }}</span>
+                            <span class="text-sm text-gray-600">Avg Acc: {{ number_format($batch->average_accuracy, 1) }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: {{ min(100, $batch->average_accuracy) }}%"></div>
+                        </div>
+                        <a href="{{ route('teacher.batch.detail', $batch) }}" class="block w-full text-center px-4 py-2 border border-blue-600 rounded-lg font-medium text-blue-600 hover:bg-blue-50 transition ease-in-out duration-150">
+                            View Batch Details
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Students Who Need Attention -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Students Who Need Attention</h3>
+                <span class="text-sm text-gray-600">{{ count($studentsAtRisk) }} students</span>
+            </div>
+
+            @if(count($studentsAtRisk) > 0)
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-sm">👤</span>
+                    @foreach($studentsAtRisk as $student)
+                        <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                    <span class="text-sm">😕</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $student['user']->name }}</div>
+                                    <div class="text-xs text-gray-600">
+                                        {{ implode(', ', $student['reasons']) }} |
+                                        Last active: {{ $student['last_active']->diffForHumans() }}
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">Sarah J.</div>
-                                <div class="text-xs text-gray-600">Batch A</div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm font-medium text-blue-600">52 WPM</div>
-                            <div class="text-xs text-green-600">96% Acc</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                <span class="text-sm">👤</span>
-                            </div>
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">Mike C.</div>
-                                <div class="text-xs text-gray-600">Batch B</div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-blue-600">{{ $student['wpm'] }} WPM</div>
+                                <div class="text-xs {{ $student['accuracy'] < 80 ? 'text-red-600' : 'text-green-600' }}">
+                                    {{ $student['accuracy'] }}% Acc
+                                </div>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm font-medium text-blue-600">45 WPM</div>
-                            <div class="text-xs text-green-600">92% Acc</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <span class="text-sm">👤</span>
-                            </div>
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">Emma W.</div>
-                                <div class="text-xs text-gray-600">Batch A</div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm font-medium text-blue-600">48 WPM</div>
-                            <div class="text-xs text-green-600">94% Acc</div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
+            @else
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">😊</span>
+                    </div>
+                    <p class="text-gray-600">All students are performing well!</p>
+                    <p class="text-sm text-gray-500">No students need attention at this time.</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View All Activity</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="text-gray-600 border-b">
+                        <tr>
+                            <th class="text-left py-2 font-medium">Student</th>
+                            <th class="text-left py-2 font-medium">Exercise</th>
+                            <th class="text-center py-2 font-medium">WPM</th>
+                            <th class="text-center py-2 font-medium">Accuracy</th>
+                            <th class="text-right py-2 font-medium">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        @foreach($recentActivity as $activity)
+                            <tr class="border-b last:border-b-0 hover:bg-gray-50">
+                                <td class="py-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <span class="text-sm">👤</span>
+                                        </div>
+                                        <span>{{ $activity['student_name'] }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3">{{ Str::limit($activity['exercise_name'], 30) }}</td>
+                                <td class="py-3 text-center font-medium text-blue-600">{{ $activity['wpm'] }}</td>
+                                <td class="py-3 text-center {{ $activity['accuracy'] < 80 ? 'text-red-600' : 'text-green-600' }} font-medium">
+                                    {{ $activity['accuracy'] }}%
+                                </td>
+                                <td class="py-3 text-right text-sm text-gray-500">
+                                    {{ $activity['timestamp']->diffForHumans() }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Batch Progress Overview -->
+        <!-- Quick Actions -->
         <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Batch Progress Overview</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-blue-50 rounded-xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-900">Batch A (Beginner)</h4>
-                        <span class="text-sm text-gray-600">18 students</span>
+                <a href="{{ route('teacher.dashboard') }}" class="block text-center p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition ease-in-out duration-150">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-xl">📚</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                    <span class="font-medium text-gray-900">View All Batches</span>
+                </a>
+                <a href="#" class="block text-center p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition ease-in-out duration-150">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-xl">👥</span>
                     </div>
-                    <div class="text-sm text-gray-600">45% completion</div>
-                </div>
-                <div class="bg-purple-50 rounded-xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-900">Batch B (Intermediate)</h4>
-                        <span class="text-sm text-gray-600">12 students</span>
+                    <span class="font-medium text-gray-900">View All Students</span>
+                </a>
+                <a href="#" class="block text-center p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition ease-in-out duration-150">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="text-xl">🏆</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: 65%"></div>
-                    </div>
-                    <div class="text-sm text-gray-600">65% completion</div>
-                </div>
-                <div class="bg-green-50 rounded-xl p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-semibold text-gray-900">Batch C (Advanced)</h4>
-                        <span class="text-sm text-gray-600">8 students</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                        <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
-                    </div>
-                    <div class="text-sm text-gray-600">85% completion</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Upcoming Tasks -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Upcoming Tasks</h3>
-            <div class="space-y-3">
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span>📅</span>
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">Grade Batch A assignments</div>
-                            <div class="text-xs text-gray-600">Due: Dec 15, 2024</div>
-                        </div>
-                    </div>
-                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View</a>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                            <span>📊</span>
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">Generate monthly progress report</div>
-                            <div class="text-xs text-gray-600">Due: Dec 20, 2024</div>
-                        </div>
-                    </div>
-                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View</a>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                            <span>🏆</span>
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">Prepare typing contest</div>
-                            <div class="text-xs text-gray-600">Due: Jan 5, 2025</div>
-                        </div>
-                    </div>
-                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View</a>
-                </div>
+                    <span class="font-medium text-gray-900">View Contests</span>
+                </a>
             </div>
         </div>
     </div>

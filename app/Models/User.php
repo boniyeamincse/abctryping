@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Step;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -22,6 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'institution_id'
     ];
 
     /**
@@ -45,6 +49,32 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the institution that the user belongs to.
+     */
+    public function institution(): BelongsTo
+    {
+        return $this->belongsTo(Institution::class);
+    }
+
+    /**
+     * Get the batches that the user is assigned to (for students).
+     */
+    public function batches(): BelongsToMany
+    {
+        return $this->belongsToMany(Batch::class, 'batch_user')
+            ->withPivot('joined_at', 'status')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the batches that the user teaches (for teachers).
+     */
+    public function teachingBatches()
+    {
+        return $this->hasMany(Batch::class, 'teacher_id');
     }
 
     /**
@@ -80,5 +110,21 @@ class User extends Authenticatable
     public function stepProgressForStep(Step $step)
     {
         return $this->stepProgress()->where('step_id', $step->id)->first();
+    }
+
+    /**
+     * Check if the user is a teacher.
+     */
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
+    }
+
+    /**
+     * Check if the user is a student in a specific batch.
+     */
+    public function isStudentInBatch(Batch $batch): bool
+    {
+        return $this->batches()->where('batch_id', $batch->id)->exists();
     }
 }

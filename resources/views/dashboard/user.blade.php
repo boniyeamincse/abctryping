@@ -112,13 +112,13 @@
                         </div>
                         <span class="text-sm font-medium text-gray-900">Levels</span>
                     </a>
-                    <a href="#" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-green-300 hover:shadow-md transition-all duration-200">
+                    <a href="{{ route('practice.index') }}" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-green-300 hover:shadow-md transition-all duration-200">
                         <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
                             <span class="text-xl">🎯</span>
                         </div>
                         <span class="text-sm font-medium text-gray-900">Practice</span>
                     </a>
-                    <a href="#" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-yellow-300 hover:shadow-md transition-all duration-200">
+                    <a href="{{ route('badges.index') }}" class="flex flex-col items-center justify-center px-4 py-3 border border-gray-200 rounded-xl hover:border-yellow-300 hover:shadow-md transition-all duration-200">
                         <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-2">
                             <span class="text-xl">🏅</span>
                         </div>
