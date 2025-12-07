@@ -1,0 +1,614 @@
+1. Project Overview
+
+Project Name: abctyping
+Type: Web-based Typing Learning & Contest Platform
+Main Target: Students, individuals, institutions (schools, training centers, companies)
+
+Core Idea:
+abctyping is a typing learning and contest platform with:
+
+Level-wise lessons (Beginner → Intermediate → Advanced → Expert)
+
+Step-based progress (Step 1 must be completed to unlock Step 2, etc.)
+
+Badges & achievements with social sharing (Facebook, LinkedIn)
+
+Certificates after completing levels
+
+Free beginner level, paid higher levels (packages)
+
+Multi-role access (Super Admin, Institution Admin, Teacher/Trainer, Normal User)
+
+2. Feature List
+2.1 User & Auth
+
+User registration / login / logout
+
+Email verification & password reset
+
+Role-based access:
+
+Super Admin
+
+Institution Admin
+
+Teacher/Trainer (optional but recommended)
+
+Normal User (Student/Individual)
+
+2.2 Learning Structure
+
+Levels:
+
+Beginner (10 steps – free)
+
+Intermediate (configurable steps, e.g. 100)
+
+Advanced (configurable)
+
+Expert (configurable)
+
+Steps inside each level:
+
+Theory content / instructions
+
+Typing exercise (text + time limit)
+
+Minimum WPM and accuracy required
+
+Rule:
+User must complete Step N to unlock Step N+1.
+Next step stays locked until previous one is completed.
+
+2.3 Typing Exercises & Practice
+
+Practice mode:
+
+Select level / step / time (1 min, 3 min, 5 min)
+
+Show text, timer, and live typing input
+
+Show WPM, accuracy, error count
+
+Lesson mode (inside steps):
+
+Guided exercises per step
+
+Auto evaluation with pass/fail result
+
+2.4 Gamification
+
+Badges:
+
+Step completion
+
+Level completion
+
+Streaks (daily practice)
+
+High WPM achievements
+
+Achievements page in user profile
+
+Share badge link publicly:
+
+https://abctyping.com/u/{username}/badge/{id}
+
+Social share buttons:
+
+Facebook
+
+LinkedIn
+
+2.5 Certification
+
+Generate certificate after:
+
+Completing specific level(s) (e.g. Beginner+Intermediate, or Full Course)
+
+Certificate:
+
+User name
+
+Level name
+
+Completion date
+
+Unique certificate ID (for verification)
+
+Public verification link:
+
+https://abctyping.com/cert/{certificate_code}
+
+2.6 Packages & Payments
+
+Free Beginner level
+
+Paid packages for:
+
+Intermediate only
+
+Advanced only
+
+Expert only
+
+Full Access (all levels)
+
+Features:
+
+Package management (Super Admin)
+
+Subscription status (active, expired)
+
+Payment records (for online gateway later)
+
+2.7 Institutions & Batches
+
+Super Admin can:
+
+Create institutions
+
+Assign Institution Admins
+
+Institution Admin can:
+
+Manage institution profile
+
+Create batches (e.g., “Batch Jan-2026”, “Batch 1 – Section A”)
+
+Add/assign students to batches
+
+View batch-wise performance reports
+
+Optional Teacher role:
+
+Manage assigned batches
+
+Monitor progress of their students
+
+Create contests for a batch
+
+2.8 Contests & Leaderboards (Phase 2+)
+
+Public contests (any user can join)
+
+Institution/batch contests
+
+Leaderboard by:
+
+WPM
+
+Accuracy
+
+Overall score
+
+2.9 Dashboards
+
+User dashboard:
+
+Current level & step
+
+Progress bar
+
+Last attempts stats
+
+Next recommended step
+
+Institution dashboard:
+
+Number of students, batches
+
+Avg WPM, avg accuracy
+
+Top performers per batch
+
+Super Admin dashboard:
+
+Total users, institutions, subscriptions
+
+System-wide usage (lessons completed, etc.)
+
+3. Technology Stack
+Backend
+
+Language: PHP 8.2+
+
+Framework: Laravel 10/11
+
+Database: MySQL / MariaDB (recommended), or PostgreSQL
+
+ORM: Eloquent
+
+Queue: Laravel Queue (Redis / Database driver)
+
+Mail: Laravel Mail (for verification, reset, notifications)
+
+Frontend (inside Laravel)
+
+To keep things simple and fast, we’ll use:
+
+Blade templates for views
+
+Tailwind CSS for modern UI
+
+Alpine.js or small JS for frontend interactivity
+
+Optionally Livewire later for dynamic components (typing area, dashboards)
+
+You can later upgrade to Inertia + Vue/React if needed, but Blade + Tailwind is enough to start.
+
+4. Modules List (Laravel-wise)
+
+Think of each module as a logical group (can be separate folders, controllers, routes).
+
+Auth & Roles Module
+
+User model & roles (enum or role table)
+
+Register, login, logout, verify email, reset password
+
+Middleware for:
+
+role:super_admin
+
+role:institution_admin
+
+role:teacher
+
+role:user
+
+User Profile Module
+
+View/edit profile
+
+Change password
+
+View personal statistics
+
+Learning Module
+
+Levels management (CRUD for Super Admin)
+
+Steps management (CRUD for Super Admin)
+
+Exercises for steps
+
+Progress tracking for users
+
+Typing Engine Module
+
+Typing page (exercise text + timer + input)
+
+Keystroke evaluation (WPM, accuracy, errors)
+
+Save attempt result
+
+Update step completion status
+
+Gamification Module
+
+Badges definition (Super Admin)
+
+Badge awarding logic
+
+User badges page
+
+Public badge page (for sharing)
+
+Certification Module
+
+Certificate templates
+
+Certificate generation
+
+Certificate verification page
+
+Institution Module
+
+Institutions CRUD (Super Admin)
+
+Batches CRUD (Institution Admin)
+
+Student-batch assignments
+
+Reports (batch-wise, student-wise)
+
+Packages & Subscription Module
+
+Packages CRUD (Super Admin)
+
+Subscription management for users
+
+Payment record (for gateway integration)
+
+Contest & Leaderboard Module (later phase)
+
+Contest CRUD
+
+Contest participation
+
+Leaderboards
+
+Admin Dashboards Module
+
+Different dashboards for:
+
+Super Admin
+
+Institution Admin
+
+Teacher
+
+5. Short DB Outline (Very High Level)
+
+Just the main tables (no full schema, just overview):
+
+users (id, name, email, password, role, institution_id nullable, …)
+
+institutions (id, name, address, contact_email, …)
+
+batches (id, institution_id, name, start_date, …)
+
+batch_user (batch_id, user_id)
+
+levels (id, name, order, description, is_free)
+
+steps (id, level_id, order, title, description, min_wpm, min_accuracy, ...)
+
+exercises (id, step_id, text, time_limit_seconds, ...)
+
+step_progress (id, user_id, step_id, status, best_wpm, best_accuracy, attempt_count, ...)
+
+exercise_attempts (id, user_id, exercise_id, wpm, accuracy, errors, duration, ...)
+
+badges (id, code, name, description, image_path, ...)
+
+user_badges (id, user_id, badge_id, awarded_at, ...)
+
+certificates (id, user_id, level_id or type, certificate_code, pdf_path, issued_at, ...)
+
+packages (id, name, description, price, duration_days, included_levels JSON/relationship, ...)
+
+subscriptions (id, user_id, package_id, start_date, end_date, status, ...)
+
+payments (id, user_id, package_id, amount, status, gateway, transaction_id, ...)
+
+6. Step-by-Step Development Plan (with Frontend Focus)
+PHASE 0 – Project Setup
+
+Create Laravel project
+
+laravel new abctyping
+
+
+Configure .env:
+
+DB connection
+
+Mail settings
+
+Run migrations (start with default users, password_resets, etc.).
+
+Install frontend tools:
+
+Tailwind CSS
+
+Configure vite.config.js
+
+PHASE 1 – Auth & Roles
+
+Backend:
+
+Use Laravel Breeze or Laravel UI for auth scaffolding.
+
+Add role column to users table (enum: super_admin, institution_admin, teacher, user).
+
+Create middleware:
+
+RoleMiddleware that checks auth()->user()->role.
+
+Frontend (Blade):
+
+Login page (Blade + Tailwind).
+
+Registration page.
+
+Basic layout file: layouts/app.blade.php
+
+Nav bar (Home, Dashboard, Logout)
+
+Show different menus for different roles.
+
+PHASE 2 – Levels, Steps & User Progress
+
+Backend:
+
+Create models + migrations for levels, steps, exercises, step_progress, exercise_attempts.
+
+Controllers (e.g. LevelController, StepController, ExerciseController).
+
+Routes (web.php):
+
+GET /levels
+
+GET /levels/{level}
+
+GET /steps/{step}
+
+POST /steps/{step}/complete (after typing test).
+
+Frontend:
+
+Level list page:
+
+Show all levels with progress (for logged-in user).
+
+Indicate locked/unlocked for paid levels.
+
+Step detail page:
+
+Show lesson text, exercise description, “Start Exercise” button.
+
+Step progress display:
+
+Show if step is Completed or Locked.
+
+Disable buttons/links for locked steps.
+
+PHASE 3 – Typing Exercise UI (Core Frontend Part)
+
+Backend:
+
+Endpoint for fetching exercise content:
+
+GET /exercises/{exercise} returns text + time limit.
+
+Endpoint for posting attempt result:
+
+POST /exercises/{exercise}/attempt
+
+Input: typed text, duration, start_time, end_time (or WPM, accuracy calculated on frontend)
+
+Save exercise_attempts & update step_progress.
+
+Frontend:
+
+Create Typing page (Blade):
+
+Show original text in a fixed area.
+
+Textarea / input for user typing.
+
+Live timer (JS).
+
+Live WPM/accuracy optional, or calculate at end.
+
+On submit:
+
+Disable input, show result.
+
+Call API route with attempt data.
+
+Show “Step Completed” or “Try again” message.
+
+UI enhancements:
+
+Highlight correct/incorrect characters.
+
+Keypress highlight (optional).
+
+PHASE 4 – Badges & Achievements
+
+Backend:
+
+Create badges & user_badges tables.
+
+Define logic inside services or observers:
+
+After step completion → check if all steps in level are done → award level badge.
+
+After X days of continuous activity → award streak badge.
+
+Frontend:
+
+“My Badges” page:
+
+Card layout: badge image + name + description + date.
+
+Public badge page:
+
+Route: /u/{username}/badge/{id}
+
+Shows badge & basic user info.
+
+Include meta tags for nice preview when shared.
+
+Add “Share” button on badge card:
+
+Opens share dialog or prefilled URL for Facebook/LinkedIn.
+
+PHASE 5 – Packages & Paid Levels
+
+Backend:
+
+Create packages, subscriptions, payments tables and models.
+
+Add middleware or helper methods:
+
+userCanAccessLevel($user, $level) checks subscription.
+
+Super Admin routes for managing packages.
+
+Frontend:
+
+“Pricing / Packages” page:
+
+Show package cards: name, levels included, price, duration.
+
+“My Subscription” page:
+
+Show current package, expiry date.
+
+On attempt to open a locked level:
+
+Show message: “This level requires package X. Go to Pricing.”
+
+PHASE 6 – Institutions & Batches
+
+Backend:
+
+Create tables: institutions, batches, batch_user.
+
+Routes & controllers:
+
+Super Admin: manage institutions.
+
+Institution Admin: manage batches and batch-student mapping.
+
+Frontend:
+
+Institution Admin Dashboard:
+
+List of batches
+
+Buttons for “Create batch”, “View batch students”.
+
+Batch detail page:
+
+List students + their progress summary.
+
+Simple charts (later, if needed).
+
+PHASE 7 – Certificates
+
+Backend:
+
+Create certificates table.
+
+Logic:
+
+When a user completes target levels → generate certificate.
+
+Use a PDF library (e.g. dompdf) to generate certificate PDF.
+
+Public route:
+
+/cert/{certificate_code}
+
+Frontend:
+
+My Certificates page:
+
+List of earned certificates.
+
+Download button.
+
+Public certificate page:
+
+Shows user, level, completion date, validity.
+
+PHASE 8 – Contests & Leaderboards (Optional, Next)
+
+You can add this in a second version:
+
+Contest CRUD, participation, leaderboard pages.
